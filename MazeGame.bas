@@ -64,7 +64,7 @@ lastMazeColumn = 1 + mazeSize ' Adjust this if your maze starts from a different
 
 ' Calculate the starting X position for the buttons based on column widths
 startX = ws.Cells(1, lastMazeColumn).Left + ws.Columns(lastMazeColumn).Width
-startY = ws.Cells(mazeSize - 4, 1).Top ' One row below the maze
+startY = ws.Cells(mazeSize - 4, 1).Top ' next to the maze
 btnHeight = ws.Rows(mazeSize + 1).Height
 btnWidth = 100 ' Adjust the width if the button text is longer
 
