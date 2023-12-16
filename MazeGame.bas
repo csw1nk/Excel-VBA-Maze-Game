@@ -1,4 +1,5 @@
- Dim mazeSize As Integer
+Attribute VB_Name = "MazeGame"
+Dim mazeSize As Integer
 Sub MazeGame()
 
 ' Module: MazeGame
