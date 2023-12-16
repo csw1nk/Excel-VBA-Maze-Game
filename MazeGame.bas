@@ -1,3 +1,4 @@
+Attribute VB_Name = "MazeGame"
  Dim mazeSize As Integer
 Sub MazeGame()
 
@@ -20,8 +21,8 @@ Const GameDescription As String = "My first program ever built in code, many mor
     
 ' Set ws to the active sheet
  Set ws = ActiveSheet
-    mazeSize = 17 ' Adjust the size of the maze (dynamic)
-    density = 0.309  ' Adjust the density of walls (dynamic)
+    mazeSize = 25 ' Adjust the size of the maze (dynamic)
+    density = 0.305  ' Adjust the density of walls (dynamic)
 
 ' set starting message box to initiate game
     userResponse = MsgBox("Are You Ready To Play?", vbYesNo + vbQuestion, "Maze Game")
@@ -63,7 +64,7 @@ lastMazeColumn = 1 + mazeSize ' Adjust this if your maze starts from a different
 
 ' Calculate the starting X position for the buttons based on column widths
 startX = ws.Cells(1, lastMazeColumn).Left + ws.Columns(lastMazeColumn).Width
-startY = ws.Cells(mazeSize + 1, 1).Top ' One row below the maze
+startY = ws.Cells(mazeSize - 4, 1).Top ' One row below the maze
 btnHeight = ws.Rows(mazeSize + 1).Height
 btnWidth = 100 ' Adjust the width if the button text is longer
 
