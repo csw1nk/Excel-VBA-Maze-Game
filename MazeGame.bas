@@ -70,13 +70,13 @@ btnHeight = ws.Rows(mazeSize + 1).Height
 btnWidth = 100 ' Adjust the width if the button text is longer
 
 ' Create new buttons to the right of the maze
-btnNames = Array("Up", "Down", "Left", "Right", "Reset")
+btnNames = Array("Up", "Down", "Left", "Right", "Reset Game")
 
 For i = 0 To UBound(btnNames)
     Set btn = ws.Buttons.Add(startX, startY + (i * btnHeight), btnWidth, btnHeight)
     With btn
         .Caption = btnNames(i)
-        If btnNames(i) = "Reset" Then
+        If btnNames(i) = "Reset Game" Then
         .OnAction = "ResetGame" 'set button to macro "
         Else
         .OnAction = "MovePlayer" & btnNames(i)
@@ -134,9 +134,9 @@ Dim squareSize As Integer
 'End Format Cells
 
 'Have to nest all the game together through this else statement for game start
-        MsgBox "Maze generated! Find your way to the end!"
+        MsgBox "Maze generated! Find your way to the end!",  vbQuestion, "Maze Game"
     Else
-        MsgBox "Maybe next time:)"
+        MsgBox "Maybe next time:)", vbQuestion, "Maze Game"
     End If
 End Sub
 
