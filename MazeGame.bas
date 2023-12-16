@@ -27,7 +27,6 @@ Const GameDescription As String = "My first program ever built in code, many mor
 
 ' set starting message box to initiate game
     userResponse = MsgBox("Are You Ready To Play?", vbYesNo + vbQuestion, "Maze Game")
-
     If userResponse = vbYes Then
 ' Clear previous game settings if any
         ws.Cells.Clear
@@ -41,7 +40,7 @@ Const GameDescription As String = "My first program ever built in code, many mor
     For i = 1 To mazeSize
     For j = 2 To mazeSize + 1
     With ws.Cells(i, j)
-		If i = 1 Or i = mazeSize Or j = 2 Or j = mazeSize + 1 Then
+                If i = 1 Or i = mazeSize Or j = 2 Or j = mazeSize + 1 Then
     .Interior.ColorIndex = 13 ' Border walls Color
     End If
      End With
@@ -78,7 +77,7 @@ For i = 0 To UBound(btnNames)
     With btn
         .Caption = btnNames(i)
         If btnNames(i) = "Reset" Then
-        .OnAction = "A_Maze_Game" 'set button to macro "
+        .OnAction = "ResetGame" 'set button to macro "
         Else
         .OnAction = "MovePlayer" & btnNames(i)
         End If
@@ -164,7 +163,7 @@ Sub MovePlayerUp()
         If currentPlayerCell.Row > 1 Then
             Dim cellAbove As Range
             Set cellAbove = ws.Cells(currentPlayerCell.Row - 1, currentPlayerCell.column)
-            If cellAbove.Interior.Color <> RGB(0, 0, 0) Then
+            If cellAbove.Interior.Color <> RGB(0, 0, 0) And cellAbove.Interior.ColorIndex <> 13 Then
                 ' Color the current cell to leave a trail
                 currentPlayerCell.Interior.ColorIndex = 48 ' Silver for the trail
 
@@ -207,7 +206,7 @@ Sub MovePlayerRight()
         If currentPlayerCell.column < ws.Columns.count Then
             Dim cellToRight As Range
             Set cellToRight = ws.Cells(currentPlayerCell.Row, currentPlayerCell.column + 1)
-            If cellToRight.Interior.Color <> RGB(0, 0, 0) Then
+            If cellToRight.Interior.Color <> RGB(0, 0, 0) And cellToRight.Interior.ColorIndex <> 13 Then
                 ' Color the current cell to leave a trail
                 currentPlayerCell.Interior.ColorIndex = 48 ' Silver for the trail
 
@@ -250,7 +249,7 @@ Sub MovePlayerDown()
       If currentPlayerCell.Row < ws.Rows.count Then
         Dim cellBelow As Range
         Set cellBelow = ws.Cells(currentPlayerCell.Row + 1, currentPlayerCell.column)
-        If cellBelow.Interior.Color <> RGB(0, 0, 0) Then
+        If cellBelow.Interior.Color <> RGB(0, 0, 0) And cellBelow.Interior.ColorIndex <> 13 Then
                 ' Color the current cell to leave a trail
                 currentPlayerCell.Interior.ColorIndex = 48 ' Silver for the trail
 
@@ -293,7 +292,7 @@ Sub MovePlayerLeft()
    If currentPlayerCell.column > 1 Then
         Dim cellToLeft As Range
         Set cellToLeft = ws.Cells(currentPlayerCell.Row, currentPlayerCell.column - 1)
-        If cellToLeft.Interior.Color <> RGB(0, 0, 0) Then
+        If cellToLeft.Interior.Color <> RGB(0, 0, 0) And cellToLeft.Interior.ColorIndex <> 13 Then
                 ' Color the current cell to leave a trails
                 currentPlayerCell.Interior.ColorIndex = 48 '  silver for the trail
 
@@ -313,4 +312,15 @@ Sub MovePlayerLeft()
     End If
 End Sub
 
+Sub ResetGame()
+   ' Ask the user if they are sure about resetting the game
+    Dim response As VbMsgBoxResult
+    response = MsgBox("Reset game?", vbYesNo + vbQuestion, "Reset Game")
+
+    ' If the user clicks 'Yes', reset the game
+    If response = vbYes Then
+        ' Call the MazeGame macro to restart the game
+        MazeGame
+    End If
+End Sub
 
