@@ -1,5 +1,4 @@
-Attribute VB_Name = "MazeGame"
-
+ Dim mazeSize As Integer
 Sub MazeGame()
 
 ' Module: MazeGame
@@ -15,7 +14,6 @@ Const GameDescription As String = "My first program ever built in code, many mor
 
     Dim userResponse As Integer
     Dim ws As Worksheet
-    Dim mazeSize As Integer
     Dim i As Integer, j As Integer
     Dim clearPathColumn As Integer
     Dim density As Double
@@ -92,6 +90,8 @@ startColumn = 3 ' Third column to avoid placing it on the border
 
 ' Clear the starting point cells
 ws.Cells(startRow + 2, startColumn - 2).value = "Start here -->"
+ws.Cells(startRow + 2, startColumn - 2).Font.Color = RGB(255, 255, 255)
+ws.Cells(startRow + 2, startColumn - 2).Interior.ColorIndex = 13
 ws.Cells(startRow + 2, startColumn - 1).Interior.ColorIndex = 41 'STARTING POINT
 ws.Cells(startRow + 2, startColumn).Interior.Color = xlNone
 ws.Cells(startRow + 2, startColumn + 1).Interior.Color = xlNone
@@ -134,7 +134,7 @@ Dim squareSize As Integer
 'End Format Cells
 
 'Have to nest all the game together through this else statement for game start
-        MsgBox "Maze generated! Find your way to the end!",  vbQuestion, "Maze Game"
+        MsgBox "Maze generated! Find your way to the end!", vbQuestion, "Maze Game"
     Else
         MsgBox "Maybe next time:)", vbQuestion, "Maze Game"
     End If
@@ -162,7 +162,7 @@ Sub MovePlayerUp()
             ' Check if the cell above is within the maze bounds and not a wall
         If currentPlayerCell.Row > 1 Then
             Dim cellAbove As Range
-            Set cellAbove = ws.Cells(currentPlayerCell.Row - 1, currentPlayerCell.column)
+            Set cellAbove = ws.Cells(currentPlayerCell.Row - 1, currentPlayerCell.Column)
             If cellAbove.Interior.Color <> RGB(0, 0, 0) And cellAbove.Interior.ColorIndex <> 13 Then
                 ' Color the current cell to leave a trail
                 currentPlayerCell.Interior.ColorIndex = 48 ' Silver for the trail
@@ -203,9 +203,9 @@ Sub MovePlayerRight()
 
     If found Then
         ' Check if the cell to the right is within the maze bounds and not a wall
-        If currentPlayerCell.column < ws.Columns.count Then
+        If currentPlayerCell.Column < ws.Columns.count Then
             Dim cellToRight As Range
-            Set cellToRight = ws.Cells(currentPlayerCell.Row, currentPlayerCell.column + 1)
+            Set cellToRight = ws.Cells(currentPlayerCell.Row, currentPlayerCell.Column + 1)
             If cellToRight.Interior.Color <> RGB(0, 0, 0) And cellToRight.Interior.ColorIndex <> 13 Then
                 ' Color the current cell to leave a trail
                 currentPlayerCell.Interior.ColorIndex = 48 ' Silver for the trail
@@ -248,13 +248,16 @@ Sub MovePlayerDown()
         ' Check if the cell to the right is within the maze bounds and not a wall
       If currentPlayerCell.Row < ws.Rows.count Then
         Dim cellBelow As Range
-        Set cellBelow = ws.Cells(currentPlayerCell.Row + 1, currentPlayerCell.column)
+        Set cellBelow = ws.Cells(currentPlayerCell.Row + 1, currentPlayerCell.Column)
         If cellBelow.Interior.Color <> RGB(0, 0, 0) And cellBelow.Interior.ColorIndex <> 13 Then
                 ' Color the current cell to leave a trail
                 currentPlayerCell.Interior.ColorIndex = 48 ' Silver for the trail
 
                 ' Move the "player" to the new position by setting the fill color
                 cellBelow.Interior.ColorIndex = 41
+     If currentPlayerCell.Row = mazeSize And currentPlayerCell.Column = mazeSize - 2 Then
+                         MsgBox "Congratulations, you won the game!", vbInformation, "Game Over"
+End If
             Else
                 ' Display a message if the player can't move right
                 MsgBox "Oops, you can't go that way!"
@@ -289,9 +292,9 @@ Sub MovePlayerLeft()
 
     If found Then
         ' Check if the cell to the right is within the maze bounds and not a wall
-   If currentPlayerCell.column > 1 Then
+   If currentPlayerCell.Column > 1 Then
         Dim cellToLeft As Range
-        Set cellToLeft = ws.Cells(currentPlayerCell.Row, currentPlayerCell.column - 1)
+        Set cellToLeft = ws.Cells(currentPlayerCell.Row, currentPlayerCell.Column - 1)
         If cellToLeft.Interior.Color <> RGB(0, 0, 0) And cellToLeft.Interior.ColorIndex <> 13 Then
                 ' Color the current cell to leave a trails
                 currentPlayerCell.Interior.ColorIndex = 48 '  silver for the trail
@@ -323,4 +326,3 @@ Sub ResetGame()
         MazeGame
     End If
 End Sub
-
