@@ -3,9 +3,9 @@ Attribute VB_Name = "MazeGame"
 Sub MazeGame()
 
 ' Module: MazeGame
-' Version: 1.0.0
+' Version: 1.1
 ' Date: 12-16-2023
-' Description: Initial release of a Maze Game built in VB Script for Excel
+' Description: Updated Fixes for MazeGame
 
 'set game details
 Const GameVersion As String = "1.0.0"
