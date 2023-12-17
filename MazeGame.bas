@@ -1,15 +1,18 @@
- Dim mazeSize As Integer
+Attribute VB_Name = "MazeGame"
+'--------------------
+Dim mazeSize As Integer
  Dim blackSquareCount As Integer
+
 Sub MazeGame()
 
 ' Module: MazeGame
 ' Version: 1.1
-' Date: 12-16-2023
-' Description: Updated Fixes for MazeGame
+' Date: 12-17-2023
+' Description: Added Hulk Smash and General Release for Game
 
 'set game details
-Const GameVersion As String = "1.0.0"
-Const GameName As String = "MazeGame1.0"
+Const GameVersion As String = "1.1"
+Const GameName As String = "MazeGame1.1"
 Const GameAuthor As String = "Corey Swink"
 Const GameDescription As String = "My first program ever built in code, many more to come"
 
