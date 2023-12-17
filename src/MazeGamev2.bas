@@ -191,6 +191,7 @@ Sub MovePlayerUp()
                         cellAbove.Interior.ColorIndex = 41
                         currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                         blackSquareCount = 0 ' Reset the count
+                        moveCount = moveCount + 1  ' Increment move count here, right after the player moves
                     Else
                         blackSquareCount = 0 ' Reset the count
                         MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
@@ -200,12 +201,13 @@ Sub MovePlayerUp()
                 End If
                 Exit Sub
             End If
-
+     
             ' Regular movement logic
             If cellAbove.Interior.ColorIndex <> 13 Then
                 ' Move the player to the new position
                 cellAbove.Interior.ColorIndex = 41
                 currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
+                moveCount = moveCount + 1  ' Increment move count here, right after the player moves
             Else
                 MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
             End If
@@ -258,6 +260,7 @@ Sub MovePlayerRight()
                         cellToRight.Interior.ColorIndex = 41
                         currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                         blackSquareCount = 0 ' Reset the count
+                        moveCount = moveCount + 1  ' Increment move count here, right after the player moves
                               Else
                         blackSquareCount = 0 ' Reset the count
                         MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
@@ -271,8 +274,9 @@ Sub MovePlayerRight()
             ' Regular movement logic
             If cellToRight.Interior.ColorIndex <> 13 Then
                 ' Move the player to the new position
-                cellToRight.Interior.ColorIndex = 41
+                cellToRight.Interior.ColorIndex = 41 'color new cell
                 currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
+                moveCount = moveCount + 1  ' Increment move count here, right after the player moves
             Else
                 MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
             End If
@@ -322,9 +326,10 @@ Sub MovePlayerDown()
                     ' Flash effect
                     Call FlashEffect1(ws, currentPlayerCell, RGB(0, 255, 0)) ' Flash green
                         ' Activate superpower: move through the black square
-                        cellBelow.Interior.ColorIndex = 41
+                        cellBelow.Interior.ColorIndex = 41 'color new cell
                         currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                         blackSquareCount = 0 ' Reset the count
+                        moveCount = moveCount + 1  ' Increment move count here, right after the player moves
                                Else
                         blackSquareCount = 0 ' Reset the count
                         MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
@@ -338,14 +343,16 @@ Sub MovePlayerDown()
             ' Regular movement logic
             If cellBelow.Interior.ColorIndex <> 13 Then
                 ' Move the player to the new position
-                cellBelow.Interior.ColorIndex = 41
+                cellBelow.Interior.ColorIndex = 41 'color new cell
                 currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
+                moveCount = moveCount + 1  ' Increment move count here, right after the player moves
                   If currentPlayerCell.Row = mazeSize And currentPlayerCell.Column = mazeSize - 2 Then
             MsgBox "Congratulations, you won the game!", vbInformation, "Game Over"
               endTime = Now
     Dim gameDuration As Long
     gameDuration = DateDiff("s", startTime, endTime)
     Debug.Print "Game End Time: " & endTime & vbCrLf & "Total Duration: " & gameDuration & " seconds"
+    Debug.Print "Total Moves: " & moveCount
     Exit Sub
         End If
             Else
@@ -397,9 +404,10 @@ Sub MovePlayerLeft()
                     ' Flash effect
                     Call FlashEffect1(ws, currentPlayerCell, RGB(0, 255, 0)) ' Flash green
                         ' Activate superpower: move through the black square
-                        cellToLeft.Interior.ColorIndex = 41
+                        cellToLeft.Interior.ColorIndex = 41 'color new cell
                         currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                         blackSquareCount = 0 ' Reset the count
+                        moveCount = moveCount + 1  ' Increment move count here, right after the player moves
                                Else
                         blackSquareCount = 0 ' Reset the count
                         MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
@@ -478,7 +486,3 @@ Sub FlashEffect1(ws As Worksheet, cell As Range, color As Long)
         Next c
     Next r
 End Sub
-
-
-
-
