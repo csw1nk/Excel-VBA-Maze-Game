@@ -1,4 +1,8 @@
 Attribute VB_Name = "MazeGame"
+
+
+
+
 '--------------------
 Dim conn As ADODB.Connection
 Dim mazeSize As Integer
@@ -7,7 +11,6 @@ Dim mazeSize As Integer
    Dim startTime As Date
     Dim endTime As Date
     Dim density As Double
-
  
 Sub MazeGame()
 
@@ -26,12 +29,10 @@ Const GameDescription As String = "My first learning into local database integra
     Dim ws As Worksheet
     Dim i As Integer, j As Integer
     Dim clearPathColumn As Integer
-    Dim density As Double
 
 ' Set ws to the active sheet
  Set ws = ActiveSheet
-    mazeSize = 17 ' Adjust the size of the maze (dynamic)
-    density = 0.305  ' Adjust the density of walls (dynamic)
+Call SetMazeParameters(20, 0.356) ' Set mazeSize and density
 
 ' set starting message box to initiate game
     userResponse = MsgBox("Are You Ready To Play?", vbYesNo + vbQuestion, "Maze Game")
@@ -354,6 +355,7 @@ Sub MovePlayerDown()
                   If currentPlayerCell.Row = mazeSize And currentPlayerCell.Column = mazeSize - 2 Then
             MsgBox "Congratulations, you won the game!", vbInformation, "Game Over"
               endTime = Now
+    Call SetMazeParameters(20, 0.356) ' Set mazeSize and density
     Dim gameDuration As Long
     gameDuration = DateDiff("s", startTime, endTime)
     Debug.Print "Game End Time: " & endTime & vbCrLf & "Total Duration: " & gameDuration & " seconds"
@@ -458,7 +460,7 @@ Sub FlashEffect(ws As Worksheet, cell As Range, color As Long)
     Dim originalColor As Long
     originalColor = cell.Interior.color
     cell.Interior.color = color
-    Application.Wait (Now + TimeValue("0:00:02")) ' Wait 1 second
+    Application.Wait (Now + TimeValue("0:00:008")) ' Wait 1 second
     cell.Interior.color = originalColor
 End Sub
 
@@ -502,9 +504,9 @@ Sub ConnectToDatabase()
 End Sub
 Sub InsertGameData(ByVal startTime As Date, ByVal moveCount As Long, ByVal gameDuration As Long, ByVal mazeSize As Integer, ByVal density As Double)
     Dim sql As String
-    Debug.Print density
     sql = "INSERT INTO Data (GameDateTime, PlayerMoves, CompletionTime, MazeSize, Density) VALUES (#" & Format(startTime, "yyyy-mm-dd hh:mm:ss") & "#, " & moveCount & ", " & gameDuration & ", " & mazeSize & ", " & Replace(density, ",", ".") & ")"
     conn.Execute sql
+    Debug.Print sql
 End Sub
 
 Sub CloseDatabaseConnection()
@@ -514,4 +516,9 @@ Sub CloseDatabaseConnection()
         End If
         Set conn = Nothing
     End If
+End Sub
+
+Sub SetMazeParameters(size As Integer, d As Double)
+    mazeSize = size ' Set the global mazeSize variable
+    density = d ' Assuming density is also a global variable
 End Sub
