@@ -2,19 +2,22 @@ Attribute VB_Name = "MazeGame"
 '--------------------
 Dim mazeSize As Integer
  Dim blackSquareCount As Integer
-
+ Dim moveCount As Integer
+   Dim startTime As Date
+    Dim endTime As Date
+ 
 Sub MazeGame()
 
 ' Module: MazeGame
-' Version: 1.1
+' Version: 1.2
 ' Date: 12-17-2023
-' Description: Added Hulk Smash and General Release for Game
+' Description: Adding Record Counting and Database Integration
 
 'set game details
-Const GameVersion As String = "1.1"
-Const GameName As String = "MazeGame1.1"
+Const GameVersion As String = "1.2"
+Const GameName As String = "MazeGame1.2"
 Const GameAuthor As String = "Corey Swink"
-Const GameDescription As String = "My first program ever built in code, many more to come"
+Const GameDescription As String = "My first learning into local database integrations"
 
     Dim userResponse As Integer
     Dim ws As Worksheet
@@ -24,7 +27,7 @@ Const GameDescription As String = "My first program ever built in code, many mor
     
 ' Set ws to the active sheet
  Set ws = ActiveSheet
-    mazeSize = 25 ' Adjust the size of the maze (dynamic)
+    mazeSize = 17 ' Adjust the size of the maze (dynamic)
     density = 0.305  ' Adjust the density of walls (dynamic)
 
 ' set starting message box to initiate game
@@ -339,6 +342,11 @@ Sub MovePlayerDown()
                 currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                   If currentPlayerCell.Row = mazeSize And currentPlayerCell.Column = mazeSize - 2 Then
             MsgBox "Congratulations, you won the game!", vbInformation, "Game Over"
+              endTime = Now
+    Dim gameDuration As Long
+    gameDuration = DateDiff("s", startTime, endTime)
+    Debug.Print "Game End Time: " & endTime & vbCrLf & "Total Duration: " & gameDuration & " seconds"
+    Exit Sub
         End If
             Else
                 MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
@@ -470,5 +478,7 @@ Sub FlashEffect1(ws As Worksheet, cell As Range, color As Long)
         Next c
     Next r
 End Sub
+
+
 
 
