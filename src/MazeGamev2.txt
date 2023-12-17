@@ -3,6 +3,7 @@ Attribute VB_Name = "MazeGame"
 
 
 
+
 '--------------------
 Dim conn As ADODB.Connection
 Dim mazeSize As Integer
@@ -11,7 +12,8 @@ Dim mazeSize As Integer
    Dim startTime As Date
     Dim endTime As Date
     Dim density As Double
- 
+    Dim UniqueID As String
+    
 Sub MazeGame()
 
 ' Module: MazeGame
@@ -32,7 +34,7 @@ Const GameDescription As String = "My first learning into local database integra
 
 ' Set ws to the active sheet
  Set ws = ActiveSheet
-Call SetMazeParameters(20, 0.356) ' Set mazeSize and density
+Call SetMazeParameters(20, 0.356) ' Set mazeSize and density - density need to be between .2 & .4
 
 ' set starting message box to initiate game
     userResponse = MsgBox("Are You Ready To Play?", vbYesNo + vbQuestion, "Maze Game")
@@ -149,6 +151,7 @@ Dim squareSize As Integer
 'Have to nest all the game together through this else statement for game start
         MsgBox "Good luck! Find your way to the end!", vbQuestion, "Maze Game"
         startTime = Now
+        GenerateUniqueID
         Debug.Print "Game Start Time: " & startTime
         moveCount = 0
     Else
@@ -354,14 +357,14 @@ Sub MovePlayerDown()
                 moveCount = moveCount + 1  ' Increment move count here, right after the player moves
                   If currentPlayerCell.Row = mazeSize And currentPlayerCell.Column = mazeSize - 2 Then
             MsgBox "Congratulations, you won the game!", vbInformation, "Game Over"
-              endTime = Now
-    Call SetMazeParameters(20, 0.356) ' Set mazeSize and density
+            'important end game paramters that set time difference and inserts data to database
+    endTime = Now
     Dim gameDuration As Long
     gameDuration = DateDiff("s", startTime, endTime)
     Debug.Print "Game End Time: " & endTime & vbCrLf & "Total Duration: " & gameDuration & " seconds"
     Debug.Print "Total Moves: " & moveCount
     Debug.Print density
-    InsertGameData startTime, moveCount, gameDuration, mazeSize, density
+    InsertGameData UniqueID, startTime, moveCount, gameDuration, mazeSize, density
     CloseDatabaseConnection
     Exit Sub
         End If
@@ -498,13 +501,24 @@ Sub FlashEffect1(ws As Worksheet, cell As Range, color As Long)
 End Sub
 
 Sub ConnectToDatabase()
+    On Error Resume Next ' Turn on error handling
     Set conn = New ADODB.Connection
     conn.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\corey\Personal Projects\Excel-VBA-Maze-Game\DB\MazeGameDB.accdb"
     conn.Open
+    
+    ' Check if an error occurred during connection
+    If Err.Number <> 0 Then
+        ' Handle the error here (e.g., display a message)
+        MsgBox "Cannot Store Data due to No Connection to Access Database" & Err.Description, vbExclamation, "No Connection To Database"
+        Debug.Print "Error Number: " & Err.Number
+        Debug.Print "Error Description: " & Err.Description
+    End If
+    
+    On Error GoTo 0 ' Reset error handling to default
 End Sub
-Sub InsertGameData(ByVal startTime As Date, ByVal moveCount As Long, ByVal gameDuration As Long, ByVal mazeSize As Integer, ByVal density As Double)
+Sub InsertGameData(ByVal UniqueID As String, ByVal startTime As Date, ByVal moveCount As Long, ByVal gameDuration As Long, ByVal mazeSize As Integer, ByVal density As Double)
     Dim sql As String
-    sql = "INSERT INTO Data (GameDateTime, PlayerMoves, CompletionTime, MazeSize, Density) VALUES (#" & Format(startTime, "yyyy-mm-dd hh:mm:ss") & "#, " & moveCount & ", " & gameDuration & ", " & mazeSize & ", " & Replace(density, ",", ".") & ")"
+    sql = "INSERT INTO Data (UniqueID, GameDateTime, PlayerMoves, CompletionTime, MazeSize, Density) VALUES ('" & UniqueID & "', #" & Format(startTime, "yyyy-mm-dd hh:mm:ss") & "#, " & moveCount & ", " & gameDuration & ", " & mazeSize & ", " & Replace(density, ",", ".") & ")"
     conn.Execute sql
     Debug.Print sql
 End Sub
@@ -521,4 +535,9 @@ End Sub
 Sub SetMazeParameters(size As Integer, d As Double)
     mazeSize = size ' Set the global mazeSize variable
     density = d ' Assuming density is also a global variable
+End Sub
+
+Sub GenerateUniqueID()
+    ' Generate a unique ID based on the concatenation of variables
+    UniqueID = Format(startTime, "yyyymmddhh") & "_" & CStr(mazeSize) & CStr(density)
 End Sub
