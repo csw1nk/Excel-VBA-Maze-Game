@@ -1,10 +1,13 @@
 Attribute VB_Name = "MazeGame"
 '--------------------
+Dim conn As ADODB.Connection
 Dim mazeSize As Integer
  Dim blackSquareCount As Integer
  Dim moveCount As Integer
    Dim startTime As Date
     Dim endTime As Date
+    Dim density As Double
+
  
 Sub MazeGame()
 
@@ -24,7 +27,7 @@ Const GameDescription As String = "My first learning into local database integra
     Dim i As Integer, j As Integer
     Dim clearPathColumn As Integer
     Dim density As Double
-    
+
 ' Set ws to the active sheet
  Set ws = ActiveSheet
     mazeSize = 17 ' Adjust the size of the maze (dynamic)
@@ -33,6 +36,7 @@ Const GameDescription As String = "My first learning into local database integra
 ' set starting message box to initiate game
     userResponse = MsgBox("Are You Ready To Play?", vbYesNo + vbQuestion, "Maze Game")
     If userResponse = vbYes Then
+    ConnectToDatabase 'connects to database for record keeping
 ' Clear previous game settings if any
         ws.Cells.Clear
 ' Clear Buttons
@@ -96,6 +100,7 @@ startRow = 2 ' Second row to avoid placing it on the border
 startColumn = 3 ' Third column to avoid placing it on the border
 
 ' Clear the starting point cells
+Debug.Print density
 ws.Cells(startRow + 2, startColumn - 2).Value = "Start here -->"
 ws.Cells(startRow + 2, startColumn - 2).Font.color = RGB(255, 255, 255)
 ws.Cells(startRow + 2, startColumn - 2).Interior.ColorIndex = 13
@@ -353,6 +358,9 @@ Sub MovePlayerDown()
     gameDuration = DateDiff("s", startTime, endTime)
     Debug.Print "Game End Time: " & endTime & vbCrLf & "Total Duration: " & gameDuration & " seconds"
     Debug.Print "Total Moves: " & moveCount
+    Debug.Print density
+    InsertGameData startTime, moveCount, gameDuration, mazeSize, density
+    CloseDatabaseConnection
     Exit Sub
         End If
             Else
@@ -485,4 +493,25 @@ Sub FlashEffect1(ws As Worksheet, cell As Range, color As Long)
             End With
         Next c
     Next r
+End Sub
+
+Sub ConnectToDatabase()
+    Set conn = New ADODB.Connection
+    conn.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\corey\Personal Projects\Excel-VBA-Maze-Game\DB\MazeGameDB.accdb"
+    conn.Open
+End Sub
+Sub InsertGameData(ByVal startTime As Date, ByVal moveCount As Long, ByVal gameDuration As Long, ByVal mazeSize As Integer, ByVal density As Double)
+    Dim sql As String
+    Debug.Print density
+    sql = "INSERT INTO Data (GameDateTime, PlayerMoves, CompletionTime, MazeSize, Density) VALUES (#" & Format(startTime, "yyyy-mm-dd hh:mm:ss") & "#, " & moveCount & ", " & gameDuration & ", " & mazeSize & ", " & Replace(density, ",", ".") & ")"
+    conn.Execute sql
+End Sub
+
+Sub CloseDatabaseConnection()
+    If Not conn Is Nothing Then
+        If conn.State = adStateOpen Then
+            conn.Close
+        End If
+        Set conn = Nothing
+    End If
 End Sub
