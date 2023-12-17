@@ -1,14 +1,16 @@
 Attribute VB_Name = "MazeGame"
+'----------------------
+
  Dim mazeSize As Integer
 Sub MazeGame()
 
 ' Module: MazeGame
-' Version: 1.1
+' Version: 1.0
 ' Date: 12-16-2023
 ' Description: Updated Fixes for MazeGame
 
 'set game details
-Const GameVersion As String = "1.0.0"
+Const GameVersion As String = "1.0"
 Const GameName As String = "MazeGame1.0"
 Const GameAuthor As String = "Corey Swink"
 Const GameDescription As String = "My first program ever built in code, many more to come"
