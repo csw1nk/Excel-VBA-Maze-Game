@@ -90,7 +90,7 @@ startRow = 2 ' Second row to avoid placing it on the border
 startColumn = 3 ' Third column to avoid placing it on the border
 
 ' Clear the starting point cells
-ws.Cells(startRow + 2, startColumn - 2).value = "Start here -->"
+ws.Cells(startRow + 2, startColumn - 2).Value = "Start here -->"
 ws.Cells(startRow + 2, startColumn - 2).Font.color = RGB(255, 255, 255)
 ws.Cells(startRow + 2, startColumn - 2).Interior.ColorIndex = 13
 ws.Cells(startRow + 2, startColumn - 1).Interior.ColorIndex = 41 'STARTING POINT
@@ -109,7 +109,7 @@ exitRow = mazeSize ' Last row of the maze
 exitColumn = mazeSize ' Last column of the maze
 
 ' Clear the exit point cells
-ws.Cells(exitRow + 1, exitColumn - 1).value = "<-- Exit"
+ws.Cells(exitRow + 1, exitColumn - 1).Value = "<-- Exit"
 ws.Cells(exitRow + 1, exitColumn - 2).Interior.ColorIndex = 44 ' EXIT POINT
 ws.Cells(exitRow - 1, exitColumn).Interior.color = xlNone
 ws.Cells(exitRow, exitColumn - 2).Interior.color = xlNone
@@ -119,7 +119,7 @@ ws.Cells(exitRow - 2, exitColumn - 3).Interior.color = xlNone
 ws.Cells(exitRow - 2, exitColumn - 1).Interior.color = xlNone
 ws.Cells(exitRow - 1, exitColumn - 1).Interior.color = RGB(0, 0, 0)
 ws.Cells(exitRow - 1, exitColumn - 3).Interior.color = RGB(0, 0, 0)
-ws.Cells(exitRow + 2, exitColumn - 1).value = "Controls-->"
+ws.Cells(exitRow + 2, exitColumn - 1).Value = "Controls-->"
    
 'Format Cells
 ws.Columns("A:A").AutoFit
@@ -183,10 +183,11 @@ Sub MovePlayerUp()
                         currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                         blackSquareCount = 0 ' Reset the count
                     Else
-                        MsgBox "Oops, you can't go that way!"
+                        blackSquareCount = 0 ' Reset the count
+                        MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
                     End If
                 Else
-                    MsgBox "Oops, you can't go that way!"
+                    MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
                 End If
                 Exit Sub
             End If
@@ -197,10 +198,10 @@ Sub MovePlayerUp()
                 cellAbove.Interior.ColorIndex = 41
                 currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
             Else
-                MsgBox "Oops, you can't go that way!"
+                MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
             End If
         Else
-            MsgBox "Oops, you can't go that way!"
+            MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
         End If
     Else
         MsgBox "Player starting position not found."
@@ -248,11 +249,12 @@ Sub MovePlayerRight()
                         cellToRight.Interior.ColorIndex = 41
                         currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                         blackSquareCount = 0 ' Reset the count
-                    Else
-                        MsgBox "Oops, you can't go that way!"
+                              Else
+                        blackSquareCount = 0 ' Reset the count
+                        MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
                     End If
                 Else
-                    MsgBox "Oops, you can't go that way!"
+                     MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
                 End If
                 Exit Sub
             End If
@@ -263,10 +265,10 @@ Sub MovePlayerRight()
                 cellToRight.Interior.ColorIndex = 41
                 currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
             Else
-                MsgBox "Oops, you can't go that way!"
+                MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
             End If
         Else
-            MsgBox "Oops, you can't go that way!"
+            MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
         End If
     Else
         MsgBox "Player starting position not found."
@@ -314,8 +316,9 @@ Sub MovePlayerDown()
                         cellBelow.Interior.ColorIndex = 41
                         currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                         blackSquareCount = 0 ' Reset the count
-                    Else
-                        MsgBox "Oops, you can't go that way!"
+                               Else
+                        blackSquareCount = 0 ' Reset the count
+                        MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
                     End If
                 Else
                     MsgBox "Oops, you can't go that way!"
@@ -332,10 +335,10 @@ Sub MovePlayerDown()
             MsgBox "Congratulations, you won the game!", vbInformation, "Game Over"
         End If
             Else
-                MsgBox "Oops, you can't go that way!"
+                MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
             End If
         Else
-            MsgBox "Oops, you can't go that way!"
+            MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
         End If
     Else
         MsgBox "Player starting position not found."
@@ -383,11 +386,12 @@ Sub MovePlayerLeft()
                         cellToLeft.Interior.ColorIndex = 41
                         currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                         blackSquareCount = 0 ' Reset the count
-                    Else
-                        MsgBox "Oops, you can't go that way!"
+                               Else
+                        blackSquareCount = 0 ' Reset the count
+                        MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
                     End If
                 Else
-                    MsgBox "Oops, you can't go that way!"
+                    MsgBox "Oops, you can't go that way!", vbQuestion, "Maze Game"
                 End If
                 Exit Sub
             End If
@@ -460,3 +464,5 @@ Sub FlashEffect1(ws As Worksheet, cell As Range, color As Long)
         Next c
     Next r
 End Sub
+
+
