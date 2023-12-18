@@ -2,9 +2,6 @@ Attribute VB_Name = "MazeGame"
 
 
 
-
-
-
 '--------------------
 Dim conn As ADODB.Connection
 Dim mazeSize As Integer
@@ -37,7 +34,7 @@ Const GameDescription As String = "My first learning into local database integra
 ' Set ws to the active sheet
  Set ws = ActiveSheet
  
-Call SetMazeParameters(17, 0.32) ' Set mazeSize and density - density need to be between .2 & .4
+Call SetMazeParameters(20, 0.33) ' Set mazeSize and density - density need to be between .2 & .4
 
 ' set starting message box to initiate game
     userResponse = MsgBox("Are You Ready To Play?", vbYesNo + vbQuestion, "Maze Game")
@@ -512,25 +509,37 @@ End Sub
 
 Sub ConnectToDatabase()
     On Error Resume Next ' Turn on error handling
+
+    ' Attempt to create and open the database connection
     Set conn = New ADODB.Connection
     conn.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\corey\Personal Projects\Excel-VBA-Maze-Game\DB\MazeGameDB.accdb"
     conn.Open
-    
+
     ' Check if an error occurred during connection
     If Err.Number <> 0 Then
         ' Handle the error here (e.g., display a message)
-        MsgBox "Cannot Store Data due to No Connection to Access Database" & Err.Description, vbExclamation, "No Connection To Database"
         Debug.Print "Error Number: " & Err.Number
         Debug.Print "Error Description: " & Err.Description
+        ' Ensure the conn object is set to Nothing if connection failed
+        Set conn = Nothing
     End If
-    
     On Error GoTo 0 ' Reset error handling to default
 End Sub
 Sub InsertGameData(ByVal UniqueID As String, ByVal startTime As Date, ByVal moveCount As Long, ByVal gameDuration As Long, ByVal mazeSize As Integer, ByVal density As Double)
+    If conn Is Nothing Then
+    Exit Sub
+    End If
+    
+    If conn.State = 0 Then ' 0 means the connection is closed
+  Exit Sub
+    End If
     Dim sql As String
     sql = "INSERT INTO Data (UniqueID, GameDateTime, PlayerMoves, CompletionTime, MazeSize, Density) VALUES ('" & UniqueID & "', #" & Format(startTime, "yyyy-mm-dd hh:mm:ss") & "#, " & moveCount & ", " & gameDuration & ", " & mazeSize & ", " & Replace(density, ",", ".") & ")"
+     On Error Resume Next
     conn.Execute sql
-    Debug.Print sql
+      ' Check for errors
+        Debug.Print "Data successfully inserted: " & sql
+        On Error GoTo 0 ' Reset error handling to default
 End Sub
 
 Sub CloseDatabaseConnection()
@@ -557,22 +566,27 @@ Sub AppendDataToCSV()
     Dim filePath As String
     filePath = "C:\Users\corey\Personal Projects\Excel-VBA-Maze-Game\DB\Data.csv"
     
+    ' Determine if the file exists
+    Dim fileExists As Boolean
+    fileExists = (Dir(filePath) <> "")
+    
     ' Open the CSV file in Append mode or create it if it doesn't exist
     Dim fileNum As Integer
     fileNum = FreeFile
-    On Error Resume Next
-    Open filePath For Append As fileNum
-    If Err.Number <> 0 Then
+
+    ' Create a CSV string with the data
+    Dim csvStr As String
+    csvStr = """" & UniqueID & """,""" & Format(startTime, "yyyy-mm-dd hh:mm:ss") & """," & moveCount & "," & gameDuration & "," & mazeSize & "," & Replace(density, ",", ".")
+
+    If fileExists Then
+        ' File exists, open for appending
+        Open filePath For Append As fileNum
+    Else
         ' File doesn't exist, create it and add a header row
         Open filePath For Output As fileNum
         Print #fileNum, "UniqueID,GameDateTime,PlayerMoves,CompletionTime,MazeSize,Density"
     End If
-    On Error GoTo 0
-    
-    ' Create a CSV string with the data
-    Dim csvStr As String
-csvStr = """" & UniqueID & """,""" & Format(startTime, "yyyy-mm-dd hh:mm:ss") & """," & moveCount & "," & gameDuration & "," & mazeSize & "," & Replace(density, ",", ".")
-    
+
     ' Write the CSV string to the file
     Print #fileNum, csvStr
     
@@ -629,3 +643,4 @@ Sub AppendDataToJson()
     
     Debug.Print "Data appended to JSON file: " & filePath
 End Sub
+
