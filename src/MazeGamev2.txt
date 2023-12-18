@@ -2,8 +2,6 @@ Attribute VB_Name = "MazeGame"
 
 
 
-
-
 '--------------------
 Dim conn As ADODB.Connection
 Dim mazeSize As Integer
@@ -34,7 +32,8 @@ Const GameDescription As String = "My first learning into local database integra
 
 ' Set ws to the active sheet
  Set ws = ActiveSheet
-Call SetMazeParameters(20, 0.356) ' Set mazeSize and density - density need to be between .2 & .4
+ 
+Call SetMazeParameters(25, 0.4) ' Set mazeSize and density - density need to be between .2 & .4
 
 ' set starting message box to initiate game
     userResponse = MsgBox("Are You Ready To Play?", vbYesNo + vbQuestion, "Maze Game")
@@ -539,5 +538,5 @@ End Sub
 
 Sub GenerateUniqueID()
     ' Generate a unique ID based on the concatenation of variables
-    UniqueID = Format(startTime, "yyyymmddhh") & "_" & CStr(mazeSize) & CStr(density)
+    UniqueID = Format(startTime, "yyyymmddhhmmss") & "_" & CStr(mazeSize) & CInt(density * 1000)
 End Sub
