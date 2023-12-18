@@ -2,6 +2,9 @@ Attribute VB_Name = "MazeGame"
 
 
 
+
+
+
 '--------------------
 Dim conn As ADODB.Connection
 Dim mazeSize As Integer
@@ -34,7 +37,7 @@ Const GameDescription As String = "My first learning into local database integra
 ' Set ws to the active sheet
  Set ws = ActiveSheet
  
-Call SetMazeParameters(15, 0.25) ' Set mazeSize and density - density need to be between .2 & .4
+Call SetMazeParameters(17, 0.32) ' Set mazeSize and density - density need to be between .2 & .4
 
 ' set starting message box to initiate game
     userResponse = MsgBox("Are You Ready To Play?", vbYesNo + vbQuestion, "Maze Game")
@@ -355,15 +358,21 @@ Sub MovePlayerDown()
                 currentPlayerCell.Interior.ColorIndex = 48 ' Leave a trail
                 moveCount = moveCount + 1  ' Increment move count here, right after the player moves
                   If currentPlayerCell.Row = mazeSize And currentPlayerCell.Column = mazeSize - 2 Then
-            MsgBox "Congratulations, you won the game!", vbInformation, "Game Over"
+            'Congrats You Won the Game
+             endTime = Now
+             gameDuration = DateDiff("s", startTime, endTime)
+            MsgBox "Congratulations, you won the game!" & vbNewLine & _
+        moveCount & " Moves" & vbNewLine & _
+        gameDuration & " seconds", vbInformation, "Game Over"
+
 'important end game paramters that set time difference and inserts data to database
-    endTime = Now
-    gameDuration = DateDiff("s", startTime, endTime)
     Debug.Print "Game End Time: " & endTime & vbCrLf & "Total Duration: " & gameDuration & " seconds"
     Debug.Print "Total Moves: " & moveCount
     Debug.Print density
     Debug.Print gameDuration
     GenerateUniqueID
+    AppendDataToCSV
+    AppendDataToJson
     Application.Wait (Now + TimeValue("0:00:01"))
     InsertGameData UniqueID, startTime, moveCount, gameDuration, mazeSize, density
     CloseDatabaseConnection
@@ -541,4 +550,82 @@ End Sub
 Sub GenerateUniqueID()
     ' Generate a unique ID based on the concatenation of variables
     UniqueID = Format(startTime, "yyyymmddhhmmss") & "_" & CStr(moveCount) & CStr(gameDuration) & CStr(mazeSize) & CInt(density * 1000)
+End Sub
+
+Sub AppendDataToCSV()
+    ' Specify the file path for the CSV file
+    Dim filePath As String
+    filePath = "C:\Users\corey\Personal Projects\Excel-VBA-Maze-Game\DB\Data.csv"
+    
+    ' Open the CSV file in Append mode or create it if it doesn't exist
+    Dim fileNum As Integer
+    fileNum = FreeFile
+    On Error Resume Next
+    Open filePath For Append As fileNum
+    If Err.Number <> 0 Then
+        ' File doesn't exist, create it and add a header row
+        Open filePath For Output As fileNum
+        Print #fileNum, "UniqueID,GameDateTime,PlayerMoves,CompletionTime,MazeSize,Density"
+    End If
+    On Error GoTo 0
+    
+    ' Create a CSV string with the data
+    Dim csvStr As String
+csvStr = """" & UniqueID & """,""" & Format(startTime, "yyyy-mm-dd hh:mm:ss") & """," & moveCount & "," & gameDuration & "," & mazeSize & "," & Replace(density, ",", ".")
+    
+    ' Write the CSV string to the file
+    Print #fileNum, csvStr
+    
+    ' Close the CSV file
+    Close fileNum
+    
+    Debug.Print "Data appended to CSV file: " & filePath
+End Sub
+
+Sub AppendDataToJson()
+    ' Specify the file path for the JSON file
+    Dim filePath As String
+    filePath = "C:\Users\corey\Personal Projects\Excel-VBA-Maze-Game\DB\Data.json"
+    
+    ' Open the JSON file in Append mode or create it if it doesn't exist
+    Dim fileNum As Integer
+    fileNum = FreeFile
+    On Error Resume Next
+    Open filePath For Append As fileNum
+    If Err.Number <> 0 Then
+        ' File doesn't exist, create it and add an empty array
+        Open filePath For Output As fileNum
+   Print #fileNum, "[" ' Start with an opening bracket for the JSON array
+    Close fileNum ' Close the file to reset the pointer
+    Open filePath For Append As fileNum ' Now open it for appending
+    End If
+    On Error GoTo 0
+    
+    ' Create a JSON string with the data
+    Dim jsonStr As String
+    jsonStr = "{""UniqueID"":""" & UniqueID & """,""GameDateTime"":""" & _
+              Format(startTime, "yyyy-mm-ddThh:mm:ss") & """,""PlayerMoves"":" & _
+              moveCount & ",""CompletionTime"":" & gameDuration & ",""MazeSize"":" & _
+              mazeSize & ",""Density"":" & Replace(density, ",", ".") & "}"
+    
+    ' Read the existing JSON from the file, assume it's an array
+    Dim fileContent As String
+    Close fileNum ' Close the file to reset the pointer
+    Open filePath For Input As fileNum
+    fileContent = Input$(LOF(fileNum), fileNum)
+    Close fileNum
+    
+    ' Remove the last bracket and append the new data
+    If Len(fileContent) > 2 Then ' Check if the array is not empty
+        fileContent = Left(fileContent, Len(fileContent) - 1) & "," ' Remove the last bracket and add a comma
+    End If
+    
+    ' Reopen the file for output and rewrite the modified content
+    Open filePath For Output As fileNum
+    Print #fileNum, fileContent & jsonStr & "]"
+    
+    ' Close the JSON file
+    Close fileNum
+    
+    Debug.Print "Data appended to JSON file: " & filePath
 End Sub
