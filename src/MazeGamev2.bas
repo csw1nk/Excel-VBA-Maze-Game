@@ -11,6 +11,7 @@ Dim mazeSize As Integer
     Dim endTime As Date
     Dim density As Double
     Dim UniqueID As String
+    Dim gameDuration As Long
     
 Sub MazeGame()
 
@@ -33,7 +34,7 @@ Const GameDescription As String = "My first learning into local database integra
 ' Set ws to the active sheet
  Set ws = ActiveSheet
  
-Call SetMazeParameters(25, 0.4) ' Set mazeSize and density - density need to be between .2 & .4
+Call SetMazeParameters(15, 0.25) ' Set mazeSize and density - density need to be between .2 & .4
 
 ' set starting message box to initiate game
     userResponse = MsgBox("Are You Ready To Play?", vbYesNo + vbQuestion, "Maze Game")
@@ -150,7 +151,6 @@ Dim squareSize As Integer
 'Have to nest all the game together through this else statement for game start
         MsgBox "Good luck! Find your way to the end!", vbQuestion, "Maze Game"
         startTime = Now
-        GenerateUniqueID
         Debug.Print "Game Start Time: " & startTime
         moveCount = 0
     Else
@@ -326,7 +326,7 @@ Sub MovePlayerDown()
                 blackSquareCount = blackSquareCount + 1
 
                 ' On second encounter, offer to activate superpower
-                If blackSquareCount = 2 Then
+                If blackSquareCount >= 2 Then
                     Dim response As VbMsgBoxResult
                     response = MsgBox("Do you want to Hulk Smash?", vbYesNo + vbQuestion, "Activate Superpower")
 
@@ -356,13 +356,15 @@ Sub MovePlayerDown()
                 moveCount = moveCount + 1  ' Increment move count here, right after the player moves
                   If currentPlayerCell.Row = mazeSize And currentPlayerCell.Column = mazeSize - 2 Then
             MsgBox "Congratulations, you won the game!", vbInformation, "Game Over"
-            'important end game paramters that set time difference and inserts data to database
+'important end game paramters that set time difference and inserts data to database
     endTime = Now
-    Dim gameDuration As Long
     gameDuration = DateDiff("s", startTime, endTime)
     Debug.Print "Game End Time: " & endTime & vbCrLf & "Total Duration: " & gameDuration & " seconds"
     Debug.Print "Total Moves: " & moveCount
     Debug.Print density
+    Debug.Print gameDuration
+    GenerateUniqueID
+    Application.Wait (Now + TimeValue("0:00:01"))
     InsertGameData UniqueID, startTime, moveCount, gameDuration, mazeSize, density
     CloseDatabaseConnection
     Exit Sub
@@ -538,5 +540,5 @@ End Sub
 
 Sub GenerateUniqueID()
     ' Generate a unique ID based on the concatenation of variables
-    UniqueID = Format(startTime, "yyyymmddhhmmss") & "_" & CStr(mazeSize) & CInt(density * 1000)
+    UniqueID = Format(startTime, "yyyymmddhhmmss") & "_" & CStr(moveCount) & CStr(gameDuration) & CStr(mazeSize) & CInt(density * 1000)
 End Sub
